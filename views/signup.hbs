@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>{{title}}</title>
+</head>
+<body>
+	{{> header}}
+	{{#if error }}
+		<h1>{{error}}</h1>
+	{{/if}}
+	<div class="container">
+	    <div class="section">
+	      	<div class="row">
+	      	  <form class="col s12" action="/register" method="post">
+	      	    <div class="row">
+	      	      <div class="input-field col s6">
+	      	        <input placeholder="Placeholder" name="name" type="text" class="validate">
+	      	        <label for="first_name">Name</label>
+	      	      </div>
+	      	    </div>
+	      	    <div class="row">
+	      	      <div class="input-field col s12">
+	      	        <input id="email" type="email" name="email" class="validate">
+	      	        <label for="email">Email</label>
+	      	      </div>
+	      	    </div>
+	      	    <div class="row">
+	      	      <div class="input-field col s12">
+	      	        <input id="password" type="password" name="password" class="validate">
+	      	        <label for="password">Password</label>
+	      	      </div>
+	      	    </div>
+	      	    <div class="row">
+		      	    <button class="btn waves-effect waves-light" type="submit" name="action">Submit
+		      	      <i class="material-icons right">send</i>
+		      	    </button>
+	      	    </div>
+	      	  </form>
+	      	</div>
+	    </div>
+	</div>
+	
+	{{> footer}}
+	
+</body>
+</html>
