@@ -7,6 +7,12 @@
     	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     </head>
     <body>
+    	{{#if success }}
+    	  <div class="container"><div class="card-panel light-green-text">{{success}}</div></div>
+    	{{/if}}
+    	{{#if errors }}
+    	  <div class="container"><div class="card-panel red-text">{{errors}}</div></div>
+    	{{/if}}
     	<div class="nav">
     		<div class="container">
 		    	<a href="/signup">注册</a>

@@ -21,26 +21,19 @@ app.set('view engine','hbs');
 hbs.registerPartials(__dirname + '/views/partials');
 
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(bodyParser());
 app.use(express.static(__dirname+'/public'));
 
 
 app.use(cookieParser());
 app.use(session({
-    resave: false,
-    saveUninitialized: false,
+    resave: true,
+    saveUninitialized: true,
     secret: '123456',
     // store: new MongoStore({ url: secret.database, autoReconnect: true})
 }));
 app.use(flash());
 
-app.use(function(req, res, next){
-	res.locals.success = req.flash('success');
-	res.locals.errors = req.flash('errors');
-	next();
-});
 
 app.get('/',function(req, res){
 	res.render('index.hbs',{
@@ -52,37 +45,26 @@ app.get('/',function(req, res){
 
 app.get('/signup',function(req, res){
 	res.render('signup.hbs',{
-		title: '注册'/*,
-		success: req.flash('success'),
-		errors: req.flash('errors')*/
+		title: '注册'
 	});
 	// res.send('about.hbs');
 });
-
-app.post('/signup',function(req, res){
-	console.log(req.body);
+app.post('/register',function(req, res){
 	var newUser = new User({
 		name: req.body.name,
-		email: req.body.email,
-		password: req.body.password,
-		repassword: req.body.repassword
+		email: req.body.email
 	});
 	newUser.save().then(function(doc){
-		console.log(3);
-		// console.log(doc);
-		req.flash('success','成功');
-		return res.redirect('/signup');
+	    res.render('signup.hbs',{
+			title: '注册成功',
+			doc: doc
+	    });
+		// res.send(doc);
 	}).catch(function(err){
-		console.log(4);
-		// var key_val = err.message.match(/index\:\ [a-z_]+\.[a-z_]+\.\$([a-z_]+)\_[0-9a-z]{1,}\s+dup key[: {]+"(.+)"/).splice(1,3);
-		// [ 'username', 'debjyoti1' ]
-		// console.log(key_val);
-		// var errMsg =  key_val[1] + '已经注册'; 
-		// req.flash('errors', errMsg);
-		req.flash('errors', err.message);
-		return res.redirect('/signup');
+		res.send(err);
 	})
-});
+   
+})
 
 
 app.listen(3000, function(){

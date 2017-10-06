@@ -1,7 +1,10 @@
 var mongoose = require('mongoose');
+var validator = require('validator');
+var bcrypt = require('bcryptjs');
 
+var Schema = mongoose.Schema;
 
-var UserSchema = new mongoose.Schema({
+var UserSchema = new Schema({
 	name: {
 		type: String,
 		required: true,
@@ -13,10 +16,48 @@ var UserSchema = new mongoose.Schema({
 		required: true,
 		minlength: 1,
 		trim: true,
-		unique: true
+		unique: true,
+		validate: {
+			isAsync:false,
+			validator: validator.isEmail,
+			message: '{VALUE} 不是正确的邮箱'
+		}
+	},
+	password: {
+		type: String,
+		required: true,
+		minlength: [6, '密码至少6位']
+	},
+	repassword: {
+		type: String,
+		required: true,
+		minlength: [6, '密码至少6位'],
+		validate: {
+			isAsync:false,
+			validator: function(v){
+				return validator.equals(v, this.password)
+			},
+			message: '两次密码不一致'
+		}
 	}
 });
 
+
+UserSchema.pre('save', function(next){
+	var user = this;
+	
+	
+	if( user.isModified('password') ){
+		bcrypt.genSalt(10, function(err, salt){
+			bcrypt.hash(user.password, salt, function(err, hash){
+				user.password = hash;
+				next();
+			})
+		})
+	}else{
+		next();
+	}
+})
 var User = mongoose.model('User', UserSchema);
 
 module.exports = {
