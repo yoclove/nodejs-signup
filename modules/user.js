@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
 var validator = require('validator');
 var bcrypt = require('bcryptjs');
-
 var Schema = mongoose.Schema;
+
+
 
 var UserSchema = new Schema({
 	name: {
@@ -27,7 +28,7 @@ var UserSchema = new Schema({
 		type: String,
 		required: true,
 		minlength: [6, '密码至少6位']
-	},
+	}/*,
 	repassword: {
 		type: String,
 		required: true,
@@ -39,14 +40,12 @@ var UserSchema = new Schema({
 			},
 			message: '两次密码不一致'
 		}
-	}
+	}*/
 });
 
 
 UserSchema.pre('save', function(next){
 	var user = this;
-	
-	
 	if( user.isModified('password') ){
 		bcrypt.genSalt(10, function(err, salt){
 			bcrypt.hash(user.password, salt, function(err, hash){
@@ -58,6 +57,12 @@ UserSchema.pre('save', function(next){
 		next();
 	}
 })
+
+
+/*UserSchema.post('save', function (doc) {
+	var user = this;
+	user.set('repassword', undefined, {strict: false} );
+})*/
 var User = mongoose.model('User', UserSchema);
 
 module.exports = {

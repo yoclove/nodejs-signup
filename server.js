@@ -21,6 +21,8 @@ app.set('view engine','hbs');
 hbs.registerPartials(__dirname + '/views/partials');
 
 
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
@@ -52,35 +54,68 @@ app.get('/',function(req, res){
 
 app.get('/signup',function(req, res){
 	res.render('signup.hbs',{
-		title: '注册'/*,
+		title: '注册',
+		name: req.session.name,
+		email: req.session.email
+		/*,
 		success: req.flash('success'),
 		errors: req.flash('errors')*/
 	});
+	
+	req.session.name = null;
+	req.session.email = null;
 	// res.send('about.hbs');
 });
 
+
+
 app.post('/signup',function(req, res){
-	console.log(req.body);
-	var newUser = new User({
-		name: req.body.name,
-		email: req.body.email,
-		password: req.body.password,
-		repassword: req.body.repassword
-	});
+	var name = req.body.name;
+	var email = req.body.email;
+	var password = req.body.password;
+	var repassword = req.body.repassword;
+	
+	var errMsg = [];
+	
+	if (!(name.length >= 6 && name.length <= 10)) {
+    	errMsg.push('名字请限制在 6-10 个字符');
+	}
+	if (password.length < 6) {
+    	errMsg.push('密码至少 6 个字符');
+	}
+	if (password !== repassword) {
+    	errMsg.push('两次输入密码不一致');
+   	}
+   	if(errMsg.length > 0){
+	   	req.flash('errors', errMsg);
+	   	req.session.name = name;
+	   	req.session.email = email;
+	   	return res.redirect('/signup');
+   	}
+	
+	var user = {
+		name: name,
+		email: email,
+		password: password
+	}
+	
+	var newUser = new User(user);
 	newUser.save().then(function(doc){
-		console.log(3);
-		// console.log(doc);
 		req.flash('success','成功');
 		return res.redirect('/signup');
 	}).catch(function(err){
-		console.log(4);
-		// var key_val = err.message.match(/index\:\ [a-z_]+\.[a-z_]+\.\$([a-z_]+)\_[0-9a-z]{1,}\s+dup key[: {]+"(.+)"/).splice(1,3);
-		// [ 'username', 'debjyoti1' ]
-		// console.log(key_val);
-		// var errMsg =  key_val[1] + '已经注册'; 
-		// req.flash('errors', errMsg);
-		req.flash('errors', err.message);
-		return res.redirect('/signup');
+		
+		if (err.code === 11000) {
+			var key_val = err.message.match(/index\:\ [a-z_]+\.[a-z_]+\.\$([a-z_]+)\_[0-9a-z]{1,}\s+dup key[: {]+"(.+)"/).splice(1,3);
+			var errMsg =  key_val[1] + '已经注册'; 
+		}else{
+			var errMsg = err.message; 
+		}
+		req.flash('errors', errMsg);
+		return res.redirect('/signup',{
+	   		name: name,
+	   		email: email
+	   	});
 	})
 });
 

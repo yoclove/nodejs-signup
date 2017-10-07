@@ -11,7 +11,9 @@
     	  <div class="container"><div class="card-panel light-green-text">{{success}}</div></div>
     	{{/if}}
     	{{#if errors }}
-    	  <div class="container"><div class="card-panel red-text">{{errors}}</div></div>
+    		{{#each  errors}}
+    	  		<div class="container"><div class="card-panel red-text">{{this}}</div></div>
+  			{{/each}}
     	{{/if}}
     	<div class="nav">
     		<div class="container">
