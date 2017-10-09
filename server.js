@@ -80,9 +80,9 @@ passport.use(new LocalStrategy(
 app.use(function(req, res, next){
 	res.locals.success = req.flash('success');
 	res.locals.errors = req.flash('errors');
+	res.locals.isAuthenticated = req.isAuthenticated();
 	next();
 });
-
 
 
 passport.serializeUser(function(user, done) {
@@ -137,6 +137,13 @@ app.post('/login', passport.authenticate('local',{
 	successRedirect: '/profile',
 	failureRedirect: '/login'
 }));
+
+app.get('/logout', function(req, res){
+	req.logout();
+	req.session.destroy();
+	res.redirect('/');
+});
+
 
 
 const { check, validationResult } = require('express-validator/check');

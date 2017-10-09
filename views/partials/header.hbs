@@ -17,7 +17,12 @@
     	{{/if}}
     	<div class="nav">
     		<div class="container">
-		    	<a href="/signup">注册</a>
-		    	<a href="/login">登陆</a>
+    			{{#if isAuthenticated }}
+    				<a href="/profile">个人中心</a>
+			    	<a href="/logout">退出</a>
+		    	{{else}}
+		    		<a href="/signup">注册</a>
+		    		<a href="/login">登陆</a>
+		    	{{/if}}
     		</div>
     	</div>
