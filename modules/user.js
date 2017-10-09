@@ -56,7 +56,18 @@ UserSchema.pre('save', function(next){
 	}else{
 		next();
 	}
-})
+});
+
+
+UserSchema.statics.findUserByEmail = function(email){
+	var User = this;
+	return User.findOne({
+			'email': email
+		});
+}
+UserSchema.methods.comparePassword = function(password){
+    return bcrypt.compareSync(password, this.password);
+}
 
 
 /*UserSchema.post('save', function (doc) {
