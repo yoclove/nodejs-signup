@@ -45,7 +45,7 @@ app.use(session({
     resave: false,
     saveUninitialized: false,
     secret: '123456',
-    // store: new MongoStore({url:'mongodb://root:799305728@ds163494.mlab.com:63494/doto'})
+    store: new MongoStore({url:'mongodb://root:799305728@ds163494.mlab.com:63494/doto'})
 }));
 
 app.use(passport.initialize());
